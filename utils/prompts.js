@@ -106,4 +106,73 @@ Format: JSON
     return prompt;
 }
 
-module.exports = { reportCardPrompt, LessonPlanPrompt, pptGeneratorPrompt, proofReaderPrompt };
+function rewritePrompt(originalText, rewriteText, pdfText) {
+    let prompt = `Rewrite the following texts in the requested way:
+Original Text: ${originalText}`;
+
+    if (pdfText) {
+        prompt += `\nPDF Text: ${pdfText}`;
+    }
+
+    prompt += `\nRewrite Text in the manner described adher to it strictly: ${rewriteText}\n :
+    Format: json
+    {
+  "Title": "Title Based on Context of the originalText",
+  "OriginalText": { "subTitle": "Original Text", "array": ["Sentence 1", "Sentence 2", ...] },
+  "ReWrite": { "subTitle": "Rewritten Text", "array": ["Rewritten Sentence 1", "Rewritten Sentence 2", ...] }
+}`;
+    return prompt;
+}
+
+function essayGraderPrompt(gradeLevel, essay) {
+    return `
+        Please grade the following essay written by a ${gradeLevel} student based on grammar and sentence coherence. The total marks are 10.
+        **Essay:**
+        ${essay}
+
+        Format:json
+        {   
+            "Title": "Title based on the Essay Context",
+            "totalMarks": {subTitle:"Total Marks", array["10"]} // this is fixed 
+             "marks": {
+                "subTitle": "Obtained Marks",
+                 array[] // "marks": 5 // Example mark, should be dynamically calculated based on the essay, should only contain single element
+                },
+            "mistakes": {
+                "subTitle": "Mistakes",
+                "array": [
+                    "Incorrect verb tense usage (e.g., goes instead of went, bring instead of brought).",
+                    "Lack of proper punctuation and capitalization.",
+                    "Subject-verb agreement errors (e.g., 'My sister bring' instead of 'My sister brought').",
+                    "Unclear sentence structures affecting readability."
+                ]
+            },
+            "strengths": {
+                "subTitle": "Strengths",
+                "array": [
+                    "The student has good ideas and a clear topic.",
+                    "They show enthusiasm for their vacation, which makes the essay engaging."
+                ]
+            },
+            "weaknesses": {
+                "subTitle": "Weaknesses",
+                "array": [
+                    "Frequent grammar errors and a lack of sentence variety.",
+                    "The essay also lacks proper punctuation and capitalization in several places."
+                ]
+            },
+            "improvements": {
+                "subTitle": "Improvements",
+                "array": [
+                    "Proper verb tense usage.",
+                    "Correct sentence structures to enhance clarity.",
+                    "Using a variety of sentences to make the essay more engaging.",
+                    "Proper punctuation and capitalization."
+                ]
+            }
+        }
+        Use specific examples from the essay to illustrate each point.
+    `;
+}
+
+module.exports = { reportCardPrompt, LessonPlanPrompt, pptGeneratorPrompt, proofReaderPrompt, rewritePrompt, essayGraderPrompt };

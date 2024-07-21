@@ -17,6 +17,8 @@ const reportCardRoute = require('./routes/reportCardRoute');
 const lessonPlannerRoute = require('./routes/lessonPlannerRoute');
 const pptGeneratorRoute = require('./routes/pptGeneratorRoute') 
 const proofReaderRoute = require('./routes/proofReaderRoute');
+const rewriteRoute = require('./routes/rewriteRoute');
+const essayGraderRoute = require('./routes/essayGraderRoute');
 // Add other routes as needed
 
 // Use routes
@@ -24,6 +26,8 @@ app.use('/api/report-card', reportCardRoute);
 app.use('/api/lesson-planner', lessonPlannerRoute);
 app.use('/api/ppt-generator', pptGeneratorRoute);
 app.use('/api/proof-reader', proofReaderRoute);
+app.use('/api/rewrite', rewriteRoute);
+app.use('/api/essay-grader', essayGraderRoute);
 // Add other routes as needed
 
 const PORT = process.env.PORT || 3001;
