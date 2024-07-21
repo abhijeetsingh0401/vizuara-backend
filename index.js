@@ -19,7 +19,13 @@ const pptGeneratorRoute = require('./routes/pptGeneratorRoute')
 const proofReaderRoute = require('./routes/proofReaderRoute');
 const rewriteRoute = require('./routes/rewriteRoute');
 const essayGraderRoute = require('./routes/essayGraderRoute');
+//const translatorRoute = require('./routes/translatorRoute');
+const textSummarizerRoute = require('./routes/textSummarizerRoute');
+const textDependentQuestionRoute = require('./routes/textDependentQuestionRoute');
+const workSheetGeneratorRoute = require('./routes/workSheetGeneratorRoute');
 // Add other routes as needed
+
+//mcq worksheet youtube
 
 // Use routes
 app.use('/api/report-card', reportCardRoute);
@@ -28,6 +34,11 @@ app.use('/api/ppt-generator', pptGeneratorRoute);
 app.use('/api/proof-reader', proofReaderRoute);
 app.use('/api/rewrite', rewriteRoute);
 app.use('/api/essay-grader', essayGraderRoute);
+//app.use('/api/translator', translatorRoute);
+app.use('/api/text-summarizer', textSummarizerRoute);
+app.use('/api/text-dependent-question', textDependentQuestionRoute);
+app.use('/api/worksheet-generator', workSheetGeneratorRoute);
+
 // Add other routes as needed
 
 const PORT = process.env.PORT || 3001;

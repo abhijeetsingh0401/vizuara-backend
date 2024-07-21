@@ -1,5 +1,5 @@
 const reportCardPrompt = ({ gradeLevel, studentPronouns, strengths, growths }) => {
-    return `
+  return `
       Generate a detailed evaluation for a student with the following details, include Student Pronouns in all cases:
       
       Grade Level: ${gradeLevel}
@@ -31,7 +31,7 @@ const reportCardPrompt = ({ gradeLevel, studentPronouns, strengths, growths }) =
 };
 
 const LessonPlanPrompt = ({ gradeLevel, content, additionalContext, alignedStandard }) => {
-    return `
+  return `
       Generate a lesson plan for the following details:
   
       Grade Level: ${gradeLevel}
@@ -58,7 +58,7 @@ const LessonPlanPrompt = ({ gradeLevel, content, additionalContext, alignedStand
 };
 
 const pptGeneratorPrompt = (topic) => {
-    return `
+  return `
       Generate a detailed presentation outline on the following topic: ${topic}
       
       Format: json
@@ -82,7 +82,7 @@ const pptGeneratorPrompt = (topic) => {
 };
 
 function proofReaderPrompt(text) {
-    const prompt = `Please proofread the following text for grammar, spelling, and punctuation errors. Make any necessary corrections. Also, list the changes made along with explanations for each change:
+  const prompt = `Please proofread the following text for grammar, spelling, and punctuation errors. Make any necessary corrections. Also, list the changes made along with explanations for each change:
 
 Text: ${text}
 
@@ -103,29 +103,29 @@ Format: JSON
   }
 }`;
 
-    return prompt;
+  return prompt;
 }
 
 function rewritePrompt(originalText, rewriteText, pdfText) {
-    let prompt = `Rewrite the following texts in the requested way:
+  let prompt = `Rewrite the following texts in the requested way:
 Original Text: ${originalText}`;
 
-    if (pdfText) {
-        prompt += `\nPDF Text: ${pdfText}`;
-    }
+  if (pdfText) {
+    prompt += `\nPDF Text: ${pdfText}`;
+  }
 
-    prompt += `\nRewrite Text in the manner described adher to it strictly: ${rewriteText}\n :
+  prompt += `\nRewrite Text in the manner described adher to it strictly: ${rewriteText}\n :
     Format: json
     {
   "Title": "Title Based on Context of the originalText",
   "OriginalText": { "subTitle": "Original Text", "array": ["Sentence 1", "Sentence 2", ...] },
   "ReWrite": { "subTitle": "Rewritten Text", "array": ["Rewritten Sentence 1", "Rewritten Sentence 2", ...] }
 }`;
-    return prompt;
+  return prompt;
 }
 
 function essayGraderPrompt(gradeLevel, essay) {
-    return `
+  return `
         Please grade the following essay written by a ${gradeLevel} student based on grammar and sentence coherence. The total marks are 10.
         **Essay:**
         ${essay}
@@ -175,4 +175,86 @@ function essayGraderPrompt(gradeLevel, essay) {
     `;
 }
 
-module.exports = { reportCardPrompt, LessonPlanPrompt, pptGeneratorPrompt, proofReaderPrompt, rewritePrompt, essayGraderPrompt };
+function textSummaryPrompt(lengthSummary, inputText) {
+  return `Summarize the following inputText after instructions into ${lengthSummary} and make sure to stick to defined lengthSummary. Ensure the summary is clear and concise, and each point is in a separate sentence: ${inputText}
+
+Format: json
+{
+  "Title": "Generated Summary Title",
+  "OriginalText": {
+    "subTitle": "Original Text",
+    "array": [${JSON.stringify(inputText)}]
+  },
+  "Summary": {
+    "subTitle": "Summary Text",
+    "array": []
+  }
+}`;
+}
+
+function textDependentQuestionPrompt(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText) {
+  let prompt = `
+Generate ${numberOfQuestions} ${questionTypes} questions with correct answers for a ${gradeLevel} grade student. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. Provide an explanation for each question and answer. Provide the output in the following JSON format:
+
+Format: array inside json 
+{
+"Title":"Context about the questionText in 5 under words",
+"Questions":[
+{
+  "difficulty": "easy",
+  "question": "Question text",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "answer": "Correct Option",
+  "explanation": "Explanation of the correct answer"
+},
+{
+  "difficulty": "medium",
+  "question": "Question text",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "answer": "Correct Option",
+  "explanation": "Explanation of the correct answer"
+},
+{
+  "difficulty": "hard",
+  "question": "Question text",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "answer": "Correct Option",
+  "explanation": "Explanation of the correct answer"
+}
+]
+}
+Text:
+${questionText}`;
+
+  return prompt;
+}
+
+function generateWorksheetPrompt(gradeLevel, numQuestions, questionType, hardQuestions, mediumQuestions, easyQuestions, transcript) {
+  return `
+You are an experienced educational content creator. I need you to generate a worksheet for students based on the following information:
+
+1. Grade Level: ${gradeLevel}
+2. Topic or Text: ${transcript}
+
+Please follow this exact structure and format for the response to ensure uniformity:
+Generate ${numQuestions} ${questionType} questions with correct answers for a ${gradeLevel} grade student based on the following video transcript. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. Provide an explanation for each question and answer. Provide the output in the following JSON format:
+
+Format: array inside JSON 
+{
+"Title":"Context about the questionText in 5 under words",
+"Questions":[
+{
+  "difficulty": "easy or medium or hard", //  based on difficulty
+  "question": "Fill in the Blanks Questions Text _____ _____ ____",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "answer": "Correct Option",
+  "explanation": "Explanation of the correct answer"
+}
+]
+}
+
+Text: ${transcript}
+`;
+}
+
+module.exports = { reportCardPrompt, LessonPlanPrompt, pptGeneratorPrompt, proofReaderPrompt, rewritePrompt, essayGraderPrompt, textSummaryPrompt, textDependentQuestionPrompt, generateWorksheetPrompt };
