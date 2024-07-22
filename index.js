@@ -8,9 +8,10 @@ dotenv.config();
 const app = express();
 app.use(bodyParser.json());
 
-app.use(cors({
-    origin: 'http://localhost:3000'
-}));
+app.use(cors());
+// app.use(cors({
+//     origin: 'http://localhost:3000'
+// }));
 
 // Import routes
 const reportCardRoute = require('./routes/reportCardRoute');
@@ -24,9 +25,7 @@ const textSummarizerRoute = require('./routes/textSummarizerRoute');
 const textDependentQuestionRoute = require('./routes/textDependentQuestionRoute');
 const workSheetGeneratorRoute = require('./routes/workSheetGeneratorRoute');
 const mcqGeneratorRoute = require('./routes/mcqGeneratorRoute');
-// Add other routes as needed
-
-//youtube
+const youtubeGeneratorRoute = require('./routes/youtubeGeneratorRoute');
 
 // Use routes
 app.use('/api/report-card', reportCardRoute);
@@ -40,6 +39,7 @@ app.use('/api/text-summarizer', textSummarizerRoute);
 app.use('/api/text-dependent-question', textDependentQuestionRoute);
 app.use('/api/worksheet-generator', workSheetGeneratorRoute);
 app.use('/api/mcq-generator', mcqGeneratorRoute);
+app.use('/api/youtube-generator', youtubeGeneratorRoute);
 
 // Add other routes as needed
 
