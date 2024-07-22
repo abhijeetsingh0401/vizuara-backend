@@ -11,6 +11,8 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 router.post('/', async (req, res) => {
     try {
+        console.log("INSIDE YT GENERATOR")
+        console.log("YTAPI_Key:", process.env.YTAPI_Key)
         const { gradeLevel, numberOfQuestions, questionTypes, videoIdOrURL, hardQuestions, mediumQuestions, easyQuestions } = req.body;
         const { videoId, captionsAvailable } = await checkTranscriptAvailability(videoIdOrURL, process.env.YTAPI_KEY);
 
