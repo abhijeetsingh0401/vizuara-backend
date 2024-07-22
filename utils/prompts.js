@@ -229,7 +229,7 @@ ${questionText}`;
   return prompt;
 }
 
-function generateWorksheetPrompt(gradeLevel, numQuestions, questionType, hardQuestions, mediumQuestions, easyQuestions, transcript) {
+function worksheetGeneratorPrompt(gradeLevel, numQuestions, questionType, hardQuestions, mediumQuestions, easyQuestions, transcript) {
   return `
 You are an experienced educational content creator. I need you to generate a worksheet for students based on the following information:
 
@@ -257,4 +257,28 @@ Text: ${transcript}
 `;
 }
 
-module.exports = { reportCardPrompt, LessonPlanPrompt, pptGeneratorPrompt, proofReaderPrompt, rewritePrompt, essayGraderPrompt, textSummaryPrompt, textDependentQuestionPrompt, generateWorksheetPrompt };
+function mcqGeneratorPrompt(gradeLevel, numQuestions, questionType, hardQuestions, mediumQuestions, easyQuestions, transcript) {
+
+  return `
+Generate ${numQuestions} ${questionType} questions with correct answers for a ${gradeLevel} grade student based on the following video transcript. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. Provide an explanation for each question and answer. Provide the output in the following JSON format:
+
+Format: array inside JSON 
+{
+"Title":"Context about the questionText in 5 under words",
+"Questions": [
+{
+  "difficulty": "easy or medium or hard", //  based on difficulty
+  "question": "Question text",
+  "options": ["Option A", "Option B", "Option C", "Option D"],
+  "answer": "Correct Option",
+  "explanation": "Explanation of the correct answer"
+}
+]
+}
+
+Transcript:
+${transcript}
+`;
+}
+
+module.exports = { reportCardPrompt, LessonPlanPrompt, pptGeneratorPrompt, proofReaderPrompt, rewritePrompt, essayGraderPrompt, textSummaryPrompt, textDependentQuestionPrompt, worksheetGeneratorPrompt, mcqGeneratorPrompt };

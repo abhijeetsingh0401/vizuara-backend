@@ -23,9 +23,10 @@ const essayGraderRoute = require('./routes/essayGraderRoute');
 const textSummarizerRoute = require('./routes/textSummarizerRoute');
 const textDependentQuestionRoute = require('./routes/textDependentQuestionRoute');
 const workSheetGeneratorRoute = require('./routes/workSheetGeneratorRoute');
+const mcqGeneratorRoute = require('./routes/mcqGeneratorRoute');
 // Add other routes as needed
 
-//mcq worksheet youtube
+//youtube
 
 // Use routes
 app.use('/api/report-card', reportCardRoute);
@@ -38,6 +39,7 @@ app.use('/api/essay-grader', essayGraderRoute);
 app.use('/api/text-summarizer', textSummarizerRoute);
 app.use('/api/text-dependent-question', textDependentQuestionRoute);
 app.use('/api/worksheet-generator', workSheetGeneratorRoute);
+app.use('/api/mcq-generator', mcqGeneratorRoute);
 
 // Add other routes as needed
 
