@@ -9,11 +9,13 @@ router.post('/', async (req, res) => {
     console.log("inside worksheet generator")
 
     try {
-        const { gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText} = req.body;
+        const { gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionText} = req.body;
 
-        console.log(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText);
+        console.log(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionText);
         
-        const prompt = worksheetGeneratorPrompt(gradeLevel, numberOfQuestions, questionTypes, hardQuestions, mediumQuestions, easyQuestions, questionText);
+        const prompt = worksheetGeneratorPrompt(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionText);
+
+        console.log("PROMPT:", prompt)
 
         const result = await generateWorksheetQuestions(prompt);
         if (result) {

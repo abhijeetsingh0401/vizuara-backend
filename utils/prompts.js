@@ -229,31 +229,75 @@ ${questionText}`;
   return prompt;
 }
 
-function worksheetGeneratorPrompt(gradeLevel, numQuestions, questionType, hardQuestions, mediumQuestions, easyQuestions, transcript) {
+function worksheetGeneratorPrompt(gradeLevel, numQuestions, hardQuestions, mediumQuestions, easyQuestions, transcript) {
   return `
-You are an experienced educational content creator. I need you to generate a worksheet for students based on the following information:
+You are an experienced educational content creator. Generate a worksheet for ${gradeLevel} grade students based on the following topic or text:
 
-1. Grade Level: ${gradeLevel}
-2. Topic or Text: ${transcript}
+${transcript}
 
-Please follow this exact structure and format for the response to ensure uniformity:
-Generate ${numQuestions} ${questionType} questions with correct answers for a ${gradeLevel} grade student based on the following video transcript. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. Provide an explanation for each question and answer. Provide the output in the following JSON format:
+Please follow these instructions exactly:
 
-Format: array inside JSON 
+1. Generate a title that summarizes the topic in 5 words or less.
+2. Provide a brief "About" section giving context about the specific topic.
+3. Create a worksheet with exactly ${numQuestions} questions for EACH of the three types: fill-up (fill in the blanks), mcq (multiple-choice), and open_ended. This means you should create a total of ${numQuestions * 3} questions.
+4. Distribute a total of ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions across all types combined.
+
+Output the worksheet in the following JSON format:
+
 {
-"Title":"Context about the questionText in 5 under words",
-"Questions":[
-{
-  "difficulty": "easy or medium or hard", //  based on difficulty
-  "question": "Fill in the Blanks Questions Text _____ _____ ____",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "answer": "Correct Option",
-  "explanation": "Explanation of the correct answer"
-}
-]
+  "Title": "5-word summary of the topic",
+  "About": [
+    "First concise paragraph or point about the topic.",
+    "Second concise paragraph or point about the topic.",
+    "Additional paragraphs or points as needed."
+  ],
+  "worksheet": {
+    "fill_up": {
+      "subTitle": "Fill in the Blanks",
+      "questions": [
+        {
+          "difficulty": "easy or medium or hard",
+          "question": "Fill in the blank question with _____ for blanks",
+          "answer": "Correct answer",
+          "options": ["A) Option A", "B) Option B", "C) Option C", "D) Option D"],
+        }
+        // Repeat for exactly ${numQuestions} fill-up questions
+      ]
+    },
+    "mcq": {
+      "subTitle": "Multiple Choice Questions",
+      "questions": [
+        {
+          "difficulty": "easy or medium or hard",
+          "question": "Multiple choice question text",
+          "options": ["A) Option A", "B) Option B", "C) Option C", "D) Option D"],
+          "answer": "Correct option letter (e.g., 'B')"
+        }
+        // Repeat for exactly ${numQuestions} mcq questions
+      ]
+    },
+    "open_ended": {
+      "subTitle": "Open Ended",
+      "questions": [
+        {
+          "difficulty": "easy or medium or hard",
+          "question": "Open-ended question text",
+          "answer": "Detailed answer or key points to cover"
+        }
+        // Repeat for exactly ${numQuestions} open-ended questions
+      ]
+    }
+  }
 }
 
-Text: ${transcript}
+Ensure that:
+1. Each question type (fill_up, mcq, and open_ended) has EXACTLY ${numQuestions} questions. No more, no less.
+2. The total number of questions across all types is ${numQuestions * 3}.
+3. The questions cover the main points of the given topic or text and are appropriate for ${gradeLevel} grade students.
+4. The difficulty levels are distributed appropriately across all question types, totaling ${hardQuestions} hard, ${mediumQuestions} medium, and ${easyQuestions} easy questions.
+5. For open-ended questions, provide a comprehensive answer that covers the key points expected in a student's response.
+
+Double-check that you have created the correct number of questions for each type before finalizing your response.
 `;
 }
 
@@ -282,7 +326,7 @@ ${transcript}
 }
 
 function youtubeGeneratorPrompt(gradeLevel, numQuestions, questionType, hardQuestions, mediumQuestions, easyQuestions, transcript) {
-  
+
   return `
 Generate ${numQuestions} ${questionType} questions with correct answers for a ${gradeLevel} grade student based on the following video transcript. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. Provide an explanation for each question and answer. Provide the output in the following JSON format:
 Format: array inside JSON 
