@@ -11,33 +11,32 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 router.post('/', async (req, res) => {
     try {
-        console.log("INSIDE YT GENERATOR")
-        console.log("YTAPI_Key:", process.env.YTAPI_Key)
-        const { gradeLevel, numberOfQuestions, questionTypes, videoIdOrURL, hardQuestions, mediumQuestions, easyQuestions } = req.body;
-        const { videoId, captionsAvailable } = await checkTranscriptAvailability(videoIdOrURL, process.env.YTAPI_KEY);
-
-        if (!videoId) {
-            return res.status(400).json({ error: 'Invalid video ID' });
-        }
-
-        let transcript = null;
-
-        if (captionsAvailable) {
-            transcript = await fetchTranscript(videoId);
-        }
-
-        if (!transcript) {
-            return res.status(400).json({ error: 'Transcript not available' });
-        }
-
-        const prompt = youtubeGeneratorPrompt(gradeLevel, numberOfQuestions, questionTypes, hardQuestions, mediumQuestions, easyQuestions, transcript);
-
-        console.log("PROMPT:", prompt)
+        const { gradeLevel, numberOfQuestions, questionTypes, videoIdOrURL, hardQuestions, mediumQuestions, easyQuestions, transcriptData } = req.body;
         
+        // console.log("BACKEND DATA:", gradeLevel, numberOfQuestions, questionTypes, videoIdOrURL, hardQuestions, mediumQuestions, easyQuestions, transcriptData)
+        // // const { videoId, captionsAvailable } = await checkTranscriptAvailability(videoIdOrURL);
+
+        // return res.status(400).json({ error: 'Invalid video ID' });
+        // if (!videoId) {
+        //     return res.status(400).json({ error: 'Invalid video ID' });
+        // }
+
+        // let transcript = null;
+
+        // if (captionsAvailable) {
+        //     transcript = await fetchTranscript(videoId);
+        // }
+
+        // if (!transcript) {
+        //     return res.status(400).json({ error: 'Transcript not available' });
+        // }
+
+        const prompt = youtubeGeneratorPrompt(gradeLevel, numberOfQuestions, questionTypes, hardQuestions, mediumQuestions, easyQuestions, transcriptData);
+
+       // console.log("PROMPT:", prompt)
+
         const result = await generateYoutubeQuestions(prompt);
 
-        console.log("RESULTS:", result)
-        
         if (result) {
             return res.status(200).json(result);
         } else {
@@ -87,7 +86,9 @@ function getVideoIdFromUrl(videoUrl) {
     }
 }
 
-async function checkTranscriptAvailability(videoUrl, apiKey) {
+async function checkTranscriptAvailability(videoUrl) {
+    const apiKey = process.env.YTAPI_KEY;
+
     const videoId = getVideoIdFromUrl(videoUrl);
 
     if (!videoId) {
@@ -129,7 +130,7 @@ async function fetchTranscript(videoId) {
     }
 }
 
-async function generateYoutubeQuestions(prompt){
+async function generateYoutubeQuestions(prompt) {
     try {
         const response = await openai.chat.completions.create({
             model: 'gpt-4o-mini',

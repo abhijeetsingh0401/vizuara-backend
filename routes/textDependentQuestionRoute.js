@@ -47,6 +47,7 @@ router.post('/', async (req, res) => {
         console.log(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText);
 
         const prompt = textDependentQuestionPrompt(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText);
+        console.log("PROMPT:", prompt)
 
         const result = await generateQuestions(prompt);
         if (result) {

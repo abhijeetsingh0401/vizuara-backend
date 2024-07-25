@@ -194,34 +194,36 @@ Format: json
 
 function textDependentQuestionPrompt(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText) {
   let prompt = `
-Generate ${numberOfQuestions} ${questionTypes} questions with correct answers for a ${gradeLevel} grade student. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. Provide an explanation for each question and answer. Provide the output in the following JSON format:
+Generate ${numberOfQuestions} questions with correct answers for a ${gradeLevel} grade student. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. Each question should match one of the following types: ${questionTypes}. Provide an explanation for each question and answer. Provide the output in the following JSON format:
 
-Format: array inside json 
 {
-"Title":"Context about the questionText in 5 under words",
-"Questions":[
-{
-  "difficulty": "easy",
-  "question": "Question text",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "answer": "Correct Option",
-  "explanation": "Explanation of the correct answer"
-},
-{
-  "difficulty": "medium",
-  "question": "Question text",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "answer": "Correct Option",
-  "explanation": "Explanation of the correct answer"
-},
-{
-  "difficulty": "hard",
-  "question": "Question text",
-  "options": ["Option A", "Option B", "Option C", "Option D"],
-  "answer": "Correct Option",
-  "explanation": "Explanation of the correct answer"
-}
-]
+  "title": "Context about the questionText in 5 or fewer words",
+  "questions": [
+    {
+      "type": "Question type (e.g., Comprehension, Literary Devices, Theme, etc.)",
+      "difficulty": "easy",
+      "question": "Question text",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Correct Option",
+      "explanation": "Explanation of the correct answer"
+    },
+    {
+      "type": "Question type (e.g., Comprehension, Literary Devices, Theme, etc.)",
+      "difficulty": "medium",
+      "question": "Question text",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Correct Option",
+      "explanation": "Explanation of the correct answer"
+    },
+    {
+      "type": "Question type (e.g., Comprehension, Literary Devices, Theme, etc.)",
+      "difficulty": "hard",
+      "question": "Question text",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "answer": "Correct Option",
+      "explanation": "Explanation of the correct answer"
+    }
+  ]
 }
 Text:
 ${questionText}`;
