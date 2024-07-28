@@ -13,18 +13,18 @@ router.post('/', async (req, res) => {
     try {
         const { gradeLevel, numberOfQuestions, questionTypes, videoIdOrURL, hardQuestions, mediumQuestions, easyQuestions, transcriptData } = req.body;
         
-        // console.log("BACKEND DATA:", gradeLevel, numberOfQuestions, questionTypes, videoIdOrURL, hardQuestions, mediumQuestions, easyQuestions, transcriptData)
-        // // const { videoId, captionsAvailable } = await checkTranscriptAvailability(videoIdOrURL);
+        console.log("BACKEND DATA:", gradeLevel, numberOfQuestions, questionTypes, videoIdOrURL, hardQuestions, mediumQuestions, easyQuestions, transcriptData)
+        // const { videoId } = await getVideoIdFromUrl(videoIdOrURL);
 
-        // return res.status(400).json({ error: 'Invalid video ID' });
+        // // return res.status(400).json({ error: 'Invalid video ID' });
         // if (!videoId) {
         //     return res.status(400).json({ error: 'Invalid video ID' });
         // }
 
         // let transcript = null;
 
-        // if (captionsAvailable) {
-        //     transcript = await fetchTranscript(videoId);
+        // if (videoId) {
+        //     transcript = await getTranscriptFromScraper(videoId);
         // }
 
         // if (!transcript) {
@@ -32,8 +32,6 @@ router.post('/', async (req, res) => {
         // }
 
         const prompt = youtubeGeneratorPrompt(gradeLevel, numberOfQuestions, questionTypes, hardQuestions, mediumQuestions, easyQuestions, transcriptData);
-
-       // console.log("PROMPT:", prompt)
 
         const result = await generateYoutubeQuestions(prompt);
 
@@ -50,86 +48,6 @@ router.post('/', async (req, res) => {
 
 module.exports = router;
 
-function normalizeUrl(videoUrl) {
-    try {
-        const parsedUrl = parse(videoUrl, true);
-        let videoId = '';
-
-        if (parsedUrl.hostname === 'youtu.be') {
-            videoId = parsedUrl.pathname.substring(1);
-            return `https://www.youtube.com/watch?v=${videoId}`;
-        } else if (parsedUrl.hostname === 'www.youtube.com' || parsedUrl.hostname === 'youtube.com') {
-            return videoUrl;
-        } else {
-            throw new Error('Invalid YouTube URL');
-        }
-    } catch (error) {
-        console.error('Error normalizing URL:', error);
-        throw new Error('Invalid YouTube URL');
-    }
-}
-
-function getVideoIdFromUrl(videoUrl) {
-    try {
-        const normalizedUrl = normalizeUrl(videoUrl);
-        const parsedUrl = parse(normalizedUrl, true);
-        const videoId = parsedUrl.query.v || parsedUrl.pathname.split('/').pop();
-
-        if (!videoId) {
-            throw new Error('Invalid video ID');
-        }
-
-        return videoId;
-    } catch (error) {
-        console.error('Error extracting video ID from URL:', error);
-        throw new Error('Invalid YouTube URL');
-    }
-}
-
-async function checkTranscriptAvailability(videoUrl) {
-    const apiKey = process.env.YTAPI_KEY;
-
-    const videoId = getVideoIdFromUrl(videoUrl);
-
-    if (!videoId) {
-        console.error('Invalid video URL');
-        return { videoId: null, captionsAvailable: false };
-    }
-
-    const youtubeClient = google.youtube({
-        version: 'v3',
-        auth: apiKey,
-    });
-
-    try {
-        const response = await youtubeClient.captions.list({
-            part: 'snippet',
-            videoId,
-        });
-
-        return {
-            videoId,
-            captionsAvailable: response.data.items && response.data.items.length > 0,
-        };
-    } catch (error) {
-        console.error('Error fetching captions:', error);
-        return { videoId, captionsAvailable: false };
-    }
-}
-
-async function fetchTranscript(videoId) {
-    try {
-        const subtitles = await getSubtitles({
-            videoID: videoId,
-            lang: 'en',
-        });
-        return subtitles.map(subtitle => subtitle.text).join(' ');
-    } catch (error) {
-        console.error('Error fetching transcript:', error);
-        return null;
-    }
-}
-
 async function generateYoutubeQuestions(prompt) {
     try {
         const response = await openai.chat.completions.create({
@@ -144,4 +62,41 @@ async function generateYoutubeQuestions(prompt) {
         console.error('Error generating questions:', error);
         return null;
     }
+}
+
+async function getTranscriptFromScraper(videoId) {
+    try {
+        const subtitles = await getSubtitles({ videoID: videoId, lang: 'en' });
+        return subtitles.map(subtitle => subtitle.text).join(' ');
+    } catch (error) {
+        console.error('Error fetching transcript using scraper:', error);
+        return 'No transcript available.';
+    }
+}
+
+function getVideoIdFromUrl(url) {
+    if (typeof url !== 'string') return null;
+
+    // Regular expressions for different YouTube URL formats
+    const regexPatterns = [
+        // youtu.be URLs
+        /^https?:\/\/youtu\.be\/([^\/\?\&]+)/,
+        // youtube.com/watch?v= URLs
+        /^https?:\/\/(?:www\.)?youtube\.com\/watch\?(?:[^&]+&)*v=([^&]+)/,
+        // youtube.com/embed/ URLs
+        /^https?:\/\/(?:www\.)?youtube\.com\/embed\/([^\/\?\&]+)/,
+        // youtube.com/v/ URLs
+        /^https?:\/\/(?:www\.)?youtube\.com\/v\/([^\/\?\&]+)/,
+        // youtube.com/shorts/ URLs
+        /^https?:\/\/(?:www\.)?youtube\.com\/shorts\/([^\/\?\&]+)/
+    ];
+
+    for (const pattern of regexPatterns) {
+        const match = url.match(pattern);
+        if (match && match[1]) {
+            return match[1];
+        }
+    }
+
+    return null;
 }

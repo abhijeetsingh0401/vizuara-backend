@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
 
         console.log(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText);
 
-        const prompt = textDependentQuestionPrompt(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText);
+        const prompt = TestPrompt(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText);
         console.log("PROMPT:", prompt)
 
         const result = await generateQuestions(prompt);
@@ -64,3 +64,47 @@ router.post('/', async (req, res) => {
 });
 
 module.exports = router;
+
+function TestPrompt(gradeLevel, numberOfQuestions, hardQuestions, mediumQuestions, easyQuestions, questionTypes, questionText) {
+    let prompt = `
+  Generate ${numberOfQuestions} text-dependent questions with correct answers for a ${gradeLevel} grade student based on the provided text. The questions should be divided into three categories: ${hardQuestions} hard questions, ${mediumQuestions} medium questions, and ${easyQuestions} easy questions. All of question should be the following types: ${questionTypes}. Ensure that all questions require close reading of the text to answer. Provide an explanation for each question and answer. Provide the output in the following JSON format:
+  
+  {
+    "Title": "Context about the questionText in 5 or fewer words",
+    "Original Text": "Original questionText here",
+    "text-question": [
+      {
+        "difficulty": "easy",
+        "question": "Text-dependent question",
+        "answer": "Answer",
+        "explanation": "Explanation of the correct answer, referencing specific parts of the text"
+      },
+      {
+        "difficulty": "medium",
+        "question": "Text-dependent question",
+        "answer": "Answer",
+        "explanation": "Explanation of the correct answer, referencing specific parts of the text"
+      },
+      {
+        "difficulty": "hard",
+        "question": "Text-dependent question",
+        "answer": "Answer",
+        "explanation": "Explanation of the correct answer, referencing specific parts of the text"
+      }
+    ]
+  }
+  
+  Ensure that:
+  1. All questions are directly based on the provided text.
+  2. Questions require students to cite evidence from the text in their answers.
+  3. Literary Device questions focus on identifying and analyzing specific devices used in the text.
+  4. Comprehension questions test understanding of explicit and implicit information in the text.
+  5. Theme questions require analysis of the text's overall message or underlying ideas.
+  6. Mix questions combine analysis of literary devices with comprehension of the text.
+  7. Explanations reference specific parts of the text to justify the correct answer.
+  
+  Text:
+  ${questionText}`;
+  
+    return prompt;
+  }

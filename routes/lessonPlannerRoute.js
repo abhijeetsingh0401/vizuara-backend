@@ -44,7 +44,7 @@ const getLessonPlanFromOpenAI = async (prompt) => {
 router.post('/', async (req, res) => {
     const { gradeLevel, content, additionalContext, alignedStandard } = req.body;
     console.log(gradeLevel, content, additionalContext, alignedStandard);
-
+    
     if (!gradeLevel || !content) {
         return res.status(400).json({ error: 'Grade level and content are required' });
     }
