@@ -1,0 +1,8 @@
+OPENAI_API_KEY=""
+PORT=""
+
+
+## add the below ones if you need to use the translator 
+GOOGLE_PROJECT_ID=""
+GOOGLE_PRIVATE_KEY=""
+GOOGLE_CLIENT_EMAIL=""
